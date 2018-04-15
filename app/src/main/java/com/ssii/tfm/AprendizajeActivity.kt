@@ -38,7 +38,7 @@ class AprendizajeActivity : AppCompatActivity() {
 
     fun elegirConcepto (lugar : String) {
         nombreImagen.visibility = View.INVISIBLE
-       val concepto = Model.eligeUbicacion(lugar)
+       val concepto = AprendizajeModel.eligeUbicacion(lugar)
         mostrarConcepto(concepto.first, concepto.second)
     }
 
