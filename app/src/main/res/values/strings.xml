@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TFM</string>
+    <string name="intro">Escoge tu ubicación actual</string>
+    <string name="modo">Escoge el modo de aprendizaje</string>
+    <string name="rbUbicacion1">Universidad</string>
+    <string name="rbUbicacion2">Estacion</string>
+    <string name="rbUbicacion3">Parque</string>
+    <string name="evaluacion">¡Evalúame!</string>
+</resources>
