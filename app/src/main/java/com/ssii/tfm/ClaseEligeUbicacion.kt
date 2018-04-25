@@ -5,14 +5,13 @@ package com.ssii.tfm
  */
 object ClaseEligeUbicacion {
 
-    fun eligeUbicacion(lugar : String) : Pair<String, Int> {
+    fun eligeUbicacion(lugar : String, anterior : Pair<String, Int>) : Pair<String, Int> {
         var conceptoElegido : Pair<String, Int>
-        println("en eligeUbicacion del modelo")
         conceptoElegido = when (lugar) {
-            "Universidad" -> EleccionAleatoria.elegirConcepto(Vocabulario.getUniversidad())
-            "Estacion" -> EleccionAleatoria.elegirConcepto(Vocabulario.getEstacion())
-            "Parque" ->  EleccionAleatoria.elegirConcepto(Vocabulario.getParque())
-            else -> EleccionAleatoria.elegirConcepto(Vocabulario.getAleatorio())
+            "Universidad" -> EleccionAleatoria.elegirConcepto(Vocabulario.getUniversidad().filter { c -> c!= anterior })
+            "Estacion" -> EleccionAleatoria.elegirConcepto(Vocabulario.getEstacion().filter { c -> c!= anterior })
+            "Parque" ->  EleccionAleatoria.elegirConcepto(Vocabulario.getParque().filter { c -> c!= anterior })
+            else -> EleccionAleatoria.elegirConcepto(Vocabulario.getAleatorio().filter { c -> c!= anterior })
         }
         return conceptoElegido
     }

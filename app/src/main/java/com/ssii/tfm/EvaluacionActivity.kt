@@ -1,6 +1,7 @@
 package com.ssii.tfm
 
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
@@ -16,10 +17,12 @@ class EvaluacionActivity : AppCompatActivity() {
         op1.setOnClickListener{comprobarRespuesta(op1.text.toString(), op1)}
         op2.setOnClickListener{comprobarRespuesta(op2.text.toString(), op2)}
         op3.setOnClickListener{comprobarRespuesta(op3.text.toString(), op3)}
+        botonSiguiente.setOnClickListener{recuperarVariables()}
         recuperarVariables()
     }
 
     fun recuperarVariables() {
+        resetAparienciaBotones()
         val bundle = intent.extras
         val mode = bundle.getString("modo")
         if (mode == "Nolocation") conceptoAEvaluar = EvaluacionModel.elegirConceptoCorrecto("aleatorio")
@@ -36,7 +39,19 @@ class EvaluacionActivity : AppCompatActivity() {
     }
 
     fun comprobarRespuesta(opcionElegida : String, idBoton : Button) {
-        if (opcionElegida == conceptoAEvaluar.first) idBoton.setBackgroundColor(Color.GREEN)
-        else idBoton.setBackgroundColor(Color.RED)
+        if (opcionElegida == conceptoAEvaluar.first) idBoton.background.setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY)
+        else idBoton.background.setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY)
+        op1.isEnabled = false
+        op2.isEnabled = false
+        op3.isEnabled = false
+    }
+
+    fun resetAparienciaBotones() {
+        op1.background.clearColorFilter()
+        op2.background.clearColorFilter()
+        op3.background.clearColorFilter()
+        op1.isEnabled = true
+        op2.isEnabled = true
+        op3.isEnabled = true
     }
 }

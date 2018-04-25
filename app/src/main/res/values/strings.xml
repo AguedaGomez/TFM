@@ -6,4 +6,5 @@
     <string name="rbUbicacion2">Estacion</string>
     <string name="rbUbicacion3">Parque</string>
     <string name="evaluacion">¡Evalúame!</string>
+    <string name="conocePalabra">¿Conocías esta palabra?</string>
 </resources>
