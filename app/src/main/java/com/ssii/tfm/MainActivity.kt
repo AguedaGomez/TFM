@@ -1,19 +1,79 @@
 package com.ssii.tfm
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import android.util.Log
+import com.ubikgs.androidsensors.AndroidSensors
+import com.ubikgs.androidsensors.SensorType
+import com.ubikgs.androidsensors.gatherers.gps.LocationGatherer
+import com.ubikgs.androidsensors.records.gps.LocationRecord
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
+
+    private val permissionRequestCode = 0
+    private lateinit var locationGatherer: LocationGatherer
+    private var locationSuscription : Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        btnUniversidad.setOnClickListener{eligeUbicacion(btnUniversidad.text.toString())}
+        /*btnUniversidad.setOnClickListener{eligeUbicacion(btnUniversidad.text.toString())}
         btnEstacion.setOnClickListener { eligeUbicacion(btnEstacion.text.toString()) }
-        btnParque.setOnClickListener { eligeUbicacion(btnParque.text.toString()) }
+        btnParque.setOnClickListener { eligeUbicacion(btnParque.text.toString()) }*/
+
+        val androidSensors = AndroidSensors
+                .builder()
+                .build(this.applicationContext)
+
+        this.locationGatherer = androidSensors.sensorGathererBy(SensorType.LOCATION) as LocationGatherer
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Apagar la ubicación cuando la aplicación esté en segundo plano
+        this.locationSuscription?.dispose()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        startListeningUserLocation()
+    }
+
+    private fun startListeningUserLocation() {
+        // Mirar si tienes permiso del usuario
+        if (!locationGatherer.hasPermissionGranted()) {
+            ActivityCompat.requestPermissions(this, arrayOf(locationGatherer.neededPermission), permissionRequestCode)
+        }
+
+        // Mirar si está disponible
+        if (!locationGatherer.isReady) {
+            locationGatherer.askForEnabling()
+            return
+        }
+
+        locationSuscription = locationGatherer
+                .recordStream()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    val locationRecord = it as LocationRecord
+                    Log.d("Localizacion", locationRecord.toString())
+                })
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == this.permissionRequestCode) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startListeningUserLocation()
+            }
+        }
     }
 
     fun eligeUbicacion(btnText : String) {
