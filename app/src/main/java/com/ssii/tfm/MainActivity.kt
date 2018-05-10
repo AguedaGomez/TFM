@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.ubikgs.androidsensors.AndroidSensors
 import com.ubikgs.androidsensors.SensorType
 import com.ubikgs.androidsensors.gatherers.gps.LocationGatherer
@@ -13,6 +12,7 @@ import com.ubikgs.androidsensors.records.gps.LocationRecord
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,15 +22,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        /*btnUniversidad.setOnClickListener{eligeUbicacion(btnUniversidad.text.toString())}
-        btnEstacion.setOnClickListener { eligeUbicacion(btnEstacion.text.toString()) }
-        btnParque.setOnClickListener { eligeUbicacion(btnParque.text.toString()) }*/
+        setContentView(R.layout.activity_main
 
         val androidSensors = AndroidSensors
                 .builder()
-                .build(this.applicationContext)
+                .build(this)
 
         this.locationGatherer = androidSensors.sensorGathererBy(SensorType.LOCATION) as LocationGatherer
     }
@@ -50,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         // Mirar si tienes permiso del usuario
         if (!locationGatherer.hasPermissionGranted()) {
             ActivityCompat.requestPermissions(this, arrayOf(locationGatherer.neededPermission), permissionRequestCode)
+            return
         }
 
         // Mirar si está disponible
@@ -62,9 +59,12 @@ class MainActivity : AppCompatActivity() {
                 .recordStream()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
+                .take(1)
                 .subscribe({
                     val locationRecord = it as LocationRecord
-                    Log.d("Localizacion", locationRecord.toString())
+                    latitud.text = locationRecord.latitude.toString()
+                    longitud.text = locationRecord.longitude.toString()
+                    //Log.d("Localizacion", locationRecord.toString())
                 })
     }
 

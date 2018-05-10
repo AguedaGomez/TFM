@@ -7,4 +7,6 @@
     <string name="rbUbicacion3">Parque</string>
     <string name="evaluacion">¡Evalúame!</string>
     <string name="conocePalabra">¿Conocías esta palabra?</string>
+    <string name="latitud">Estás en la latitud:</string>
+    <string name="longitud">Estás en la longitud:</string>
 </resources>
